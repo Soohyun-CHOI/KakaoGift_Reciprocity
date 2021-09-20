@@ -3,6 +3,8 @@ import pandas as pd
 from statsmodels.formula.api import ols
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # 데이터 불러오기
 df = pd.read_csv("data/kakao_pilot_test.csv")
@@ -55,6 +57,14 @@ df_clean = df_drop[df_drop_colnames_new[-7:]]  # 범주별 평균 데이터프�
 df_clean_colnames = df_clean.columns.tolist()
 
 
+# 상관계수 heatmap
+colormap = plt.cm.PuBu
+plt.figure(figsize=(10, 8))
+plt.title("Variable Correlation Heatmap", size=15)
+sns.heatmap(df_clean.corr(), vmax=1.0, square=True, cmap=colormap, annot=True)
+plt.show()
+
+
 # Multiple Linear Regression
 
 def fit_xy_model(y_name):
@@ -79,8 +89,8 @@ print(yz_res.summary())
 
 def get_vif(model):
     pd_vif = pd.DataFrame({"column": name, "VIF": variance_inflation_factor(model.exog, idx)}
-                         for idx, name in enumerate(model.exog_names)
-                         if name != "Intercept")  # 절편의 VIF 생략
+                          for idx, name in enumerate(model.exog_names)
+                          if name != "Intercept")  # 절편의 VIF 생략
     return pd_vif
 
 
